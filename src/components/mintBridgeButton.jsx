@@ -1,20 +1,19 @@
-import { getContract, parseAbiItem } from "viem";
+import { getContract } from "viem";
 import { useAccount, usePublicClient } from "wagmi";
 import { useWalletClient } from "wagmi";
-import { polygon } from "wagmi/chains";
 
 import ABI from "../assets/ABI.json";
+import { configChain } from "../config/rainbowkit";
 
 const CONTRACT_ADDRESS = "0x1687c4140b72f6fd2692bbc4192a2d34644ae724";
 
-export const MintBridgeButton = () => {
+export const MintBridgeButton = ({ bridgedChains = [] }) => {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
   const onClick = async () => {
     if (!isConnected) return;
-
     try {
       const contractWrite = getContract({
         abi: ABI,
@@ -22,26 +21,28 @@ export const MintBridgeButton = () => {
         walletClient,
       });
 
-      const hash = await contractWrite.write.mint({
-        from: address,
-        chain: polygon,
-      });
+      for (const { chainId: dstChainId } of bridgedChains) {
+        const mintHash = await contractWrite.write.mint({
+          from: address,
+          chain: configChain[0],
+        });
 
-      const receipt = await publicClient.waitForTransactionReceipt({
-        hash,
-      });
-      console.log(receipt);
+        await publicClient.waitForTransactionReceipt({
+          hash: mintHash,
+        });
 
-      const filter = await publicClient.getLogs({
-        address: CONTRACT_ADDRESS,
-        event: parseAbiItem(
-          "event Transfer(address indexed from, address indexed to, uint256 value)"
-        ),
-        fromBlock: "latest",
-      });
+        // let tokenId = 123
+        // const crossChainHash = await contractWrite.write.crossChain(
+        //   dstChainId
+        // );
 
-      console.log(filter);
-    } catch (err) {}
+        // await publicClient.waitForTransactionReceipt({
+        //   hash: crossChainHash,
+        // });
+      }
+    } catch (err) {
+      console.log("click inner: ", err);
+    }
   };
   return (
     <div>

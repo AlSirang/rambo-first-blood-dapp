@@ -9,13 +9,12 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import "@rainbow-me/rainbowkit/styles.css";
 
-const { chains, publicClient } = configureChains(
-  [polygon],
-  [
-    alchemyProvider({ apiKey: "zQ2t3jnlD1iAcT68ehQO7X2BgAJo8wV4" }),
-    publicProvider(),
-  ]
-);
+export const configChain = [polygon];
+
+const { chains, publicClient } = configureChains(configChain, [
+  alchemyProvider({ apiKey: "zQ2t3jnlD1iAcT68ehQO7X2BgAJo8wV4" }),
+  publicProvider(),
+]);
 
 const { connectors } = getDefaultWallets({
   appName: "Rambo First Blood",

@@ -38,7 +38,6 @@ export const MintBridgeButton = ({
         ...contractPayload,
         functionName: "cost",
       });
-      console.log({ cost });
       setProgress(true);
 
       for (const { chainId: dstChainId } of bridgedChains) {
@@ -60,7 +59,7 @@ export const MintBridgeButton = ({
 
         const receipt = await publicClient.waitForTransactionReceipt({
           hash: mintHash,
-          confirmations: 1,
+          confirmations: 2,
         });
 
         let tokenId = null;
@@ -96,7 +95,7 @@ export const MintBridgeButton = ({
 
         await publicClient.waitForTransactionReceipt({
           hash: crossChainHash,
-          confirmations: 1,
+          confirmations: 2,
         });
       }
     } catch (err) {

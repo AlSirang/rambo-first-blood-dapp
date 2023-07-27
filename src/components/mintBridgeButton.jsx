@@ -73,7 +73,13 @@ export const MintBridgeButton = ({
             tokenId = parseInt(topics[3]);
         });
 
-        const crossChainValue = parseEther("0.09");
+        // const crossChainValue = parseEther("0.09");
+        const crossChainValue = await publicClient.readContract({
+          ...contractPayload,
+          functionName: "estimateFees",
+          args: [dstChainId, tokenId],
+        });
+        setProgress(true);
 
         estimateGas = await publicClient.estimateContractGas({
           ...contractPayload,

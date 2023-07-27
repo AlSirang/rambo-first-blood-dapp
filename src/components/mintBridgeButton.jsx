@@ -34,7 +34,11 @@ export const MintBridgeButton = ({
         publicClient,
       });
 
-      const cost = await contractWrite.read.cost();
+      const cost = await publicClient.readContract({
+        ...contractPayload,
+        functionName: "cost",
+      });
+      console.log({ cost });
       setProgress(true);
 
       for (const { chainId: dstChainId } of bridgedChains) {

@@ -3,6 +3,7 @@ import { CheckBox } from "./components/checkBox";
 import { Footer } from "./components/footer";
 import { Header } from "./components/header";
 import { MintBridgeButton } from "./components/mintBridgeButton";
+import { ProgressButton } from "./components/ProgressButton";
 
 const supportedBridgingChains = [
   { chain: "Moonriver", chainId: 167 },
@@ -20,7 +21,10 @@ const supportedBridgingChains = [
 function App() {
   const [bridgedChains, setBridgedChains] = useState(supportedBridgingChains);
 
+  const [txInProgress, setProgress] = useState(false);
+
   const onCheckBoxChange = (payload, event) => {
+    if (txInProgress) return;
     const isChecked = event.target.checked;
     if (isChecked) {
       const chainInList = bridgedChains.filter(
@@ -58,8 +62,19 @@ function App() {
         <div className="bg-slate-950 ring-1 ring-[#153d1d5e] ring-inset max-w-5xl m-auto mt-20 rounded-md px-5">
           <div className="flex flex-col-reverse justify-center gap-3 tablet:grid grid-cols-12 min-h-[50vh] h-full">
             <div className="tablet:col-span-6 col-span-12">
-              <div className="h-full flex justify-center items-center">
-                <MintBridgeButton bridgedChains={bridgedChains} />
+              <div className="h-full flex flex-col justify-center items-center gap-3">
+                <div>
+                  {txInProgress ? (
+                    <div className="max-w-sm w-full">
+                      <ProgressButton />
+                    </div>
+                  ) : (
+                    <MintBridgeButton
+                      bridgedChains={bridgedChains}
+                      setProgress={setProgress}
+                    />
+                  )}
+                </div>
               </div>
             </div>
             <div className="tablet:col-span-6 col-span-12">

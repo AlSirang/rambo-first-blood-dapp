@@ -1,10 +1,9 @@
-import { getContract, parseEther } from "viem";
+import { getContract } from "viem";
 import { useAccount, usePublicClient } from "wagmi";
 import { useWalletClient } from "wagmi";
 
 import ABI from "../assets/ABI.json";
 import { configChain } from "../config/rainbowkit";
-import { useRef } from "react";
 
 // hash for Transfer Event
 const TRANSFER_TOPIC =
@@ -23,8 +22,6 @@ export const MintBridgeButton = ({
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
-  const txCountRef = useRef(0);
-
   const onClick = async () => {
     if (!isConnected) return;
     try {
@@ -41,8 +38,6 @@ export const MintBridgeButton = ({
       setProgress(true);
 
       for (const { chainId: dstChainId } of bridgedChains) {
-        txCountRef.current += 1;
-
         let estimateGas = await publicClient.estimateContractGas({
           ...contractPayload,
           account: address,
@@ -73,20 +68,22 @@ export const MintBridgeButton = ({
             tokenId = parseInt(topics[3]);
         });
 
-        // const crossChainValue = parseEther("0.09");
-        const crossChainValue = await publicClient.readContract({
+        const crossChainValueRaw = await publicClient.readContract({
           ...contractPayload,
           functionName: "estimateFees",
           args: [dstChainId, tokenId],
         });
-        setProgress(true);
+
+        const crossChainValueFormatted = parseInt(
+          crossChainValueRaw
+        ).toLocaleString("fullwide", { useGrouping: false });
 
         estimateGas = await publicClient.estimateContractGas({
           ...contractPayload,
           account: address,
           functionName: "crossChain",
           args: [dstChainId, tokenId],
-          value: crossChainValue,
+          value: crossChainValueFormatted,
         });
 
         const crossChainHash = await contractWrite.write.crossChain(
@@ -95,7 +92,7 @@ export const MintBridgeButton = ({
             from: address,
             chain: configChain[0],
             gas: estimateGas,
-            value: crossChainValue, // value returned by estimate gas was only working for Tenet network. this value should work for all networks. it will return remaining value(eth) back to wallet
+            value: crossChainValueFormatted,
           }
         );
 
@@ -105,10 +102,8 @@ export const MintBridgeButton = ({
         });
       }
     } catch (err) {
-      console.log("click inner: ", err);
+      console.log("Err: ", err);
     }
-
-    txCountRef.current = 0;
 
     setProgress(false);
   };

@@ -74,16 +74,20 @@ export const MintBridgeButton = ({
           args: [dstChainId, tokenId],
         });
 
-        const crossChainValueFormatted = parseInt(
-          crossChainValueRaw
-        ).toLocaleString("fullwide", { useGrouping: false });
+        const estimateFeesValue = parseInt(crossChainValueRaw).toLocaleString(
+          "fullwide",
+          {
+            useGrouping: false,
+          }
+        );
 
+        const crossChainValue = (estimateFeesValue * 1.01).toString();
         estimateGas = await publicClient.estimateContractGas({
           ...contractPayload,
           account: address,
           functionName: "crossChain",
           args: [dstChainId, tokenId],
-          value: crossChainValueFormatted,
+          value: crossChainValue,
         });
 
         const crossChainHash = await contractWrite.write.crossChain(
@@ -92,7 +96,7 @@ export const MintBridgeButton = ({
             from: address,
             chain: configChain[0],
             gas: estimateGas,
-            value: crossChainValueFormatted,
+            value: crossChainValue,
           }
         );
 

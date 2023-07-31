@@ -1,4 +1,4 @@
-export const CheckBox = ({ chain, onCheckBoxChange = () => null }) => {
+export const CheckBox = ({ chain, value, onCheckBoxChange = () => null }) => {
   return (
     <div className="flex w-max gap-6">
       <div className="inline-flex items-center">
@@ -30,7 +30,9 @@ export const CheckBox = ({ chain, onCheckBoxChange = () => null }) => {
           </div>
         </label>
 
-        <p>{chain}</p>
+        <p>
+          {chain} (~{value})
+        </p>
       </div>
     </div>
   );

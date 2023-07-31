@@ -6,16 +6,16 @@ import { MintBridgeButton } from "./components/mintBridgeButton";
 import { ProgressButton } from "./components/ProgressButton";
 
 const supportedBridgingChains = [
-  { chain: "Moonriver", chainId: 167 },
-  { chain: "Celo", chainId: 125 },
-  { chain: "OKT Chain", chainId: 155 },
-  { chain: "Arbitrum Nova", chainId: 175 },
-  { chain: "Harmony ", chainId: 116 },
-  { chain: "Moonbeam", chainId: 126 },
-  { chain: "Gnosis", chainId: 145 },
-  { chain: "CoreDAO", chainId: 153 },
-  { chain: "Kava", chainId: 177 },
-  { chain: "Tenet", chainId: 173 },
+  { value: "$0.07", chain: "Moonriver", chainId: 167 },
+  { value: "$0.06", chain: "Celo", chainId: 125 },
+  { value: "$0.05", chain: "OKT Chain", chainId: 155 },
+  { value: "$0.04", chain: "Arbitrum Nova", chainId: 175 },
+  { value: "$0.06", chain: "Harmony ", chainId: 116 },
+  { value: "$0.07", chain: "Moonbeam", chainId: 126 },
+  { value: "$0.07", chain: "Gnosis", chainId: 145 },
+  { value: "$0.07", chain: "CoreDAO", chainId: 153 },
+  { value: "$0.07", chain: "Kava", chainId: 177 },
+  { value: "$0.06", chain: "Tenet", chainId: 173 },
 ];
 
 function App() {
@@ -86,6 +86,7 @@ function App() {
                       chainId={payload.chainId}
                       key={payload.chainId}
                       onCheckBoxChange={onCheckBoxChange.bind(this, payload)}
+                      value={payload.value}
                     />
                   ))}
                 </div>
